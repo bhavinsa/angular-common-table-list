@@ -1,0 +1,31 @@
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+  <ng-container *ngFor="let column of displayedColumns" matColumnDef="{{column.apiKey}}">
+    <ng-container *ngIf="column.apiKey == 'action'">
+      <th mat-header-cell *matHeaderCellDef> {{column.displayName}} </th>
+      <td mat-cell *matCellDef="let element">
+        <a *ngIf="column.links.isDetail == true" (click)="onDetail(element)">Detail</a> &nbsp;
+        <a *ngIf="column.links.isEdit == true" href="{{column.links.editUrl}}">Edit</a> &nbsp;
+        <a *ngIf="column.links.isDelete == true" (click)="onDetele(element)">Delete</a> &nbsp;
+      </td>
+    </ng-container>
+
+    <ng-container *ngIf="column.apiKey !== 'action'">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{column.displayName}} </th>
+      <td mat-cell *matCellDef="let element">
+        {{ element[column.apiKey]  }}
+      </td>
+    </ng-container>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsKey"></tr>
+  <tr mat-row *matRowDef="let row; columns: columnsKey;"></tr>
+</table>
+
+<mat-paginator #paginator [pageSize]="pageSize" [pageSizeOptions]=pageSizeOptions [showFirstLastButtons]="true"
+  [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)">
+</mat-paginator>
+
+<div *ngIf="!isData">
+  No data available in table.
+</div>
