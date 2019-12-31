@@ -89,10 +89,14 @@ export class HomeComponent implements OnInit {
     this.parentSubject.next(this.elementData);
   }
 
-  dataEvent(event) {
-    console.log('called dataEvent');
-    this.elementData = [...ELEMENT_DATA, ...ELEMENT_DATA2];
-    this.notifyChildren();
+  dataEvent(data) {
+    if (data.event === 'data') {
+      console.log('called dataEvent');
+      this.elementData = [...ELEMENT_DATA, ...ELEMENT_DATA2];
+      this.notifyChildren();
+    } else if (data.event === 'delete'){
+      console.log('called dataEvent - delete!' + JSON.stringify(data.element));
+    }
   }
 
 

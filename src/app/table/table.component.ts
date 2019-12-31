@@ -63,7 +63,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     console.log(end);
     console.log(this.totalSize);
     if (end >= this.totalSize) {
-      this.dataEvent.next({ start, end });
+      this.dataEvent.next({event: 'data', start, end});
     }
   }
   onDetail(element) {
@@ -82,19 +82,13 @@ export class TableComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    // const snack = this.snackBar.open('Snack bar open before dialog');
-
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       console.log('confirmed' + confirmed);
       if (confirmed) {
-        // snack.dismiss();
         const a = document.createElement('a');
         a.click();
         a.remove();
-        // snack.dismiss();
-        // this.snackBar.open('Closing snack bar in a few seconds', 'Fechar', {
-        //   duration: 2000,
-        // });
+        this.dataEvent.next({event: 'delete', element});
       }
     });
   }
