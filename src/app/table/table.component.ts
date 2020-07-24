@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, Inject } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material';
 import { Subject } from 'rxjs';
@@ -21,14 +21,15 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+  pageEvent: any;
   columnsKey: any[] = [];
   dataSource = new MatTableDataSource();
   isData: boolean;
-  constructor(private dialog: MatDialog,  private snackBar: MatSnackBar) { }
+  sortedData: unknown[];
+  constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.displayedColumns.forEach((data, index) => {
+    this.displayedColumns.forEach((data) => {
       this.columnsKey.push(data.apiKey);
     });
     this.dataSource.data = this.elementData;
@@ -63,7 +64,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     console.log(end);
     console.log(this.totalSize);
     if (end >= this.totalSize) {
-      this.dataEvent.next({event: 'data', start, end});
+      this.dataEvent.next({ event: 'data', start, end });
     }
   }
   onDetail(element) {
@@ -88,7 +89,7 @@ export class TableComponent implements OnInit, AfterViewInit {
         const a = document.createElement('a');
         a.click();
         a.remove();
-        this.dataEvent.next({event: 'delete', element});
+        this.dataEvent.next({ event: 'delete', element });
       }
     });
   }
@@ -96,9 +97,31 @@ export class TableComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
+
+
+  sortData(sort: Sort) {
+    const data = this.dataSource.data.slice();
+    if (!sort.active || sort.direction === '') {
+      this.sortedData = data;
+      return;
+    }
+
+    this.dataSource.data = data.sort((dataA, dataB) => {
+      const isAsc = sort.direction === 'asc';
+      return this.compare(dataA[sort.active], dataB[sort.active], isAsc);
+    });
+
+  }
+
+
+  compare(a: number | string, b: number | string, isAsc: boolean) {
+    return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+  }
+
+
 }
 
-import { VERSION, MatDialogRef, MatDialog, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MatDialog, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   // tslint:disable-next-line: component-selector
@@ -111,7 +134,7 @@ export class ConfirmationDialog {
   confirmButtonText = 'Yes';
   cancelButtonText = 'Cancel';
   constructor(
-    @Inject(MAT_DIALOG_DATA) private data: any,
+    @Inject(MAT_DIALOG_DATA) data: any,
     private dialogRef: MatDialogRef<ConfirmationDialog>) {
     if (data) {
       this.message = data.message || this.message;

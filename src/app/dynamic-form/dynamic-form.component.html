@@ -1,0 +1,9 @@
+<p>dynamic-form works!</p>
+<json-schema-form
+    framework="material-design"
+    [schema]="exampleJsonObject"
+    loadExternalAssets="true"
+  (onChanges)="yourOnChangesFn($event)"
+  (onSubmit)="yourOnSubmitFn($event)"
+  (isValid)="yourIsValidFn($event)"
+  (validationErrors)="yourValidationErrorsFn($event)"></json-schema-form>

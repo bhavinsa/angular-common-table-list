@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit {
 
   public pageSize = 2;
   public currentPage = 0;
-  public totalSize = 0;
+  public totalSize = 12;
 
   constructor() { }
 
@@ -105,7 +105,7 @@ export class HomeComponent implements OnInit {
       console.log('API called');
       this.elementData = ELEMENT_DATA;
       this.parentSubject.next(this.elementData);
-    }, 3000);
+    }, 100);
   }
 
   ngOnDestroy() {

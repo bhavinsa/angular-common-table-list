@@ -14,14 +14,16 @@ import { ConfirmationDialog } from './table/table.component';
 import { AboutComponent } from './about/about.component';
 import { MatInputModule, MatButtonModule, MatSelectModule, MatIconModule } from '@angular/material';
 import { FormsModule } from '@angular/forms';
-
+import { MaterialDesignFrameworkModule } from 'angular7-json-schema-form';
+import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     TableComponent,
     AboutComponent,
-    ConfirmationDialog
+    ConfirmationDialog,
+    DynamicFormComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +38,8 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatButtonModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    MaterialDesignFrameworkModule
   ],
   providers: [],
   bootstrap: [AppComponent],

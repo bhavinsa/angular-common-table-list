@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" (matSortChange)="sortData($event)">
 
   <ng-container *ngFor="let column of displayedColumns" matColumnDef="{{column.apiKey}}">
     <ng-container *ngIf="column.apiKey == 'action'">
@@ -26,6 +26,7 @@
   [length]="totalSize" [pageIndex]="currentPage" (page)="pageEvent = handlePage($event)">
 </mat-paginator>
 
+<p> {{totalSize}}</p>
 <div *ngIf="!isData">
   No data available in table.
 </div>
