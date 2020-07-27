@@ -16,11 +16,13 @@ import { MatInputModule, MatButtonModule, MatSelectModule, MatIconModule } from 
 import { FormsModule } from '@angular/forms';
 import { MaterialDesignFrameworkModule } from 'angular7-json-schema-form';
 import { DynamicFormComponent } from './dynamic-form/dynamic-form.component';
+import { MatPaginatorGotoComponent } from './mat-paginator-goto/mat-paginator-goto.component';
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     TableComponent,
+    MatPaginatorGotoComponent,
     AboutComponent,
     ConfirmationDialog,
     DynamicFormComponent

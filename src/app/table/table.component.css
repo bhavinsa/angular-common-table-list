@@ -7,3 +7,28 @@
 table{
     width: 100%;
 }
+
+.d-flex {
+  margin-top: 5px;
+  display: inline-flex;
+  float: right;
+}
+
+.go-to-container {
+  display: flex;
+  align-items: baseline;
+  background: white;
+
+}
+
+.go-to-container .mat-form-field {
+  width: 56px;
+  margin: 6px 4px 0 4px;
+  font-size: 12px;
+}
+.go-to-container .go-to-label {
+  margin: 0 4px;
+  font-size: 12px;
+  color: rgba(0,0,0,.54);
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

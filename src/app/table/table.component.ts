@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, Input, EventEmitter, Output, Inject } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material';
+import { MatPaginator, PageEvent } from '@angular/material';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -12,20 +12,44 @@ import { Subject } from 'rxjs';
 export class TableComponent implements OnInit, AfterViewInit {
   @Input() pageSizeOptions;
   @Input() pageSize;
-  @Input() currentPage = 0;
-  @Input() totalSize;
   @Input() elementData;
   @Input() displayedColumns;
   @Input() parentSubject: Subject<any>;
+  @Input() disabled = false;
+  @Input() hidePageSize = false;
+  @Input() showFirstLastButtons = false;
+  @Input('pageIndex') set pageIndexChanged(pageIndex: number) {
+    this.pageIndex = pageIndex;
+  }
+
+  @Input('length') set lengthChanged(length: number) {
+    this.length = length;
+    this.updateGoto();
+  }
+  @Input('pageSize') set pageSizeChanged(pageSize: number) {
+    this.pageSize = pageSize;
+    this.updateGoto();
+  }
+
+  @Output() page = new EventEmitter<PageEvent>();
   @Output() dataEvent = new EventEmitter<any>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+
   pageEvent: any;
   columnsKey: any[] = [];
   dataSource = new MatTableDataSource();
   isData: boolean;
-  sortedData: unknown[];
+  sortedData: any[];
+  pageIndex: number;
+  length: number;
+  currentDataLength: number;
+  goTo: number;
+  pageNumbers: number[];
+
+
+
   constructor(private dialog: MatDialog) { }
 
   ngOnInit() {
@@ -37,34 +61,28 @@ export class TableComponent implements OnInit, AfterViewInit {
 
     this.parentSubject.subscribe(event => {
       this.dataSource.data = event;
-      this.totalSize = event.length;
+      this.currentDataLength = this.dataSource.data.length;
+      this.paginator.length = this.length;
       this.isDataAvailable();
+      this.updateGoto();
     });
 
     this.isDataAvailable();
+    this.updateGoto();
   }
 
   isDataAvailable() {
-
     if (this.dataSource.data.length === 0) {
       this.isData = false;
     } else {
       this.isData = true;
     }
   }
-  handlePage(e: any) {
-    this.currentPage = e.pageIndex;
-    this.pageSize = e.pageSize;
-    this.iterator();
-  }
 
-  private iterator() {
-    const end = (this.currentPage + 1) * this.pageSize;
-    const start = this.currentPage * this.pageSize;
-    console.log(end);
-    console.log(this.totalSize);
-    if (end >= this.totalSize) {
-      this.dataEvent.next({ event: 'data', start, end });
+
+  private iterator(pageEvt: PageEvent) {
+    if (pageEvt.pageIndex * pageEvt.pageSize < this.length) {
+      this.dataEvent.next({ event: 'data', pageEvt });
     }
   }
   onDetail(element) {
@@ -72,8 +90,6 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
   onDetele(element) {
-    console.log(JSON.stringify(element));
-
     const dialogRef = this.dialog.open(ConfirmationDialog, {
       data: {
         message: 'Are you sure want to delete?',
@@ -95,7 +111,7 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
   }
 
 
@@ -111,6 +127,7 @@ export class TableComponent implements OnInit, AfterViewInit {
       return this.compare(dataA[sort.active], dataB[sort.active], isAsc);
     });
 
+
   }
 
 
@@ -119,9 +136,46 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
 
+  updateGoto() {
+    this.goTo = (this.pageIndex || 0) + 1;
+    this.pageNumbers = [];
+    for (let i = 1; i <= this.length / this.pageSize; i++) {
+      this.pageNumbers.push(i);
+    }
+  }
+
+  paginationChange(pageEvt: PageEvent) {
+    this.currentDataLength = pageEvt.length;
+    this.pageIndex = pageEvt.pageIndex;
+    this.pageSize = pageEvt.pageSize;
+    this.updateGoto();
+    this.emitPageEvent(pageEvt);
+    this.iterator(pageEvt);
+  }
+
+  goToChange() {
+    this.paginator.pageIndex = this.goTo - 1;
+    // this.emitPageEvent({
+    //   length: this.paginator.length,
+    //   pageIndex: this.paginator.pageIndex,
+    //   pageSize: this.paginator.pageSize
+    // });
+    this.iterator({
+      length: this.paginator.length,
+      pageIndex: this.paginator.pageIndex,
+      pageSize: this.paginator.pageSize
+    });
+    this.paginator._changePageSize(this.paginator.pageSize);
+  }
+
+  emitPageEvent(pageEvent: PageEvent) {
+    this.page.next(pageEvent);
+
+  }
+
 }
 
-import { MatDialogRef, MatDialog, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   // tslint:disable-next-line: component-selector

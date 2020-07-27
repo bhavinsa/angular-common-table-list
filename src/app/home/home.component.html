@@ -1,7 +1,12 @@
 <p>home works!</p>
-<app-table [elementData]="elementData" [pageSizeOptions]="pageSizeOptions" [displayedColumns]="displayedColumns"
-    [pageSize]="pageSize" [currentPage]="currentPage" [totalSize]="totalSize" 
-    [parentSubject]="parentSubject"
-    (dataEvent)="dataEvent($event)"
-    >
+<app-table [elementData]="elementData" [displayedColumns]="displayedColumns"
+  [length]="length"
+  [pageIndex]="0"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="pageSizeOptions"
+  [parentSubject]="parentSubject"
+  (page)="paginationChange($event)"
+  (dataEvent)="dataEvent($event)">
 </app-table>
+
+
