@@ -14,7 +14,7 @@ export class TableComponent implements OnInit, AfterViewInit {
   @Input() pageSize;
   @Input() elementData;
   @Input() displayedColumns;
-  @Input() parentSubject: Subject<any>;
+  @Input() listingContainerSubject: Subject<any>;
   @Input() disabled = false;
   @Input() hidePageSize = false;
   @Input() showFirstLastButtons = false;
@@ -31,8 +31,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     this.updateGoto();
   }
 
-  @Output() page = new EventEmitter<PageEvent>();
-  @Output() dataEvent = new EventEmitter<any>();
+  @Output() listingEvent = new EventEmitter<any>();
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -59,7 +58,7 @@ export class TableComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.elementData;
     this.dataSource.sort = this.sort;
 
-    this.parentSubject.subscribe(event => {
+    this.listingContainerSubject.subscribe(event => {
       this.dataSource.data = event;
       this.currentDataLength = this.dataSource.data.length;
       this.paginator.length = this.length;
@@ -82,7 +81,7 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   private iterator(pageEvt: PageEvent) {
     if (pageEvt.pageIndex * pageEvt.pageSize < this.length) {
-      this.dataEvent.next({ event: 'data', pageEvt });
+      this.listingEvent.next({ event: 'data', pageEvt });
     }
   }
   onDetail(element) {
@@ -105,7 +104,7 @@ export class TableComponent implements OnInit, AfterViewInit {
         const a = document.createElement('a');
         a.click();
         a.remove();
-        this.dataEvent.next({ event: 'delete', element });
+        this.listingEvent.next({ event: 'delete', element });
       }
     });
   }
@@ -155,11 +154,6 @@ export class TableComponent implements OnInit, AfterViewInit {
 
   goToChange() {
     this.paginator.pageIndex = this.goTo - 1;
-    // this.emitPageEvent({
-    //   length: this.paginator.length,
-    //   pageIndex: this.paginator.pageIndex,
-    //   pageSize: this.paginator.pageSize
-    // });
     this.iterator({
       length: this.paginator.length,
       pageIndex: this.paginator.pageIndex,
@@ -169,7 +163,8 @@ export class TableComponent implements OnInit, AfterViewInit {
   }
 
   emitPageEvent(pageEvent: PageEvent) {
-    this.page.next(pageEvent);
+    // this.page.next(pageEvent);
+    // this.listingEvent.next({ event: 'page',  pageEvent});
 
   }
 

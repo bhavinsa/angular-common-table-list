@@ -51,19 +51,18 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor() { }
 
-  parentSubject: Subject<any> = new Subject();
+  listingContainerSubject: Subject<any> = new Subject();
 
   notifyChildren() {
     console.log('called notifyChildren');
     console.log(this.elementData);
-    this.parentSubject.next(this.elementData);
+    this.listingContainerSubject.next(this.elementData);
   }
 
-  dataEvent(data) {
+  listingEvent(data) {
     console.log('generateData  ' + JSON.stringify(data));
     if (data.event === 'data') {
       this.generateData(data.pageEvt);
-
     } else if (data.event === 'delete') {
       console.log('called dataEvent - delete!' + JSON.stringify(data.element));
     }
@@ -71,11 +70,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    setTimeout(() => {
-      console.log(`API called`);
-      this.elementData = this.generateDataInit(50);
-      this.parentSubject.next(this.elementData);
-    }, 50);
+    this.elementData = this.generateDataInit(50);
+    this.listingContainerSubject.next(this.elementData);
   }
 
   generateData(pageEvt) {
@@ -107,10 +103,10 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.parentSubject.unsubscribe();
+    this.listingContainerSubject.unsubscribe();
   }
 
-  paginationChange(paginationDetails) {
-    console.log('Page Changed: ', paginationDetails);
-  }
+  // paginationChange(paginationDetails) {
+  //   console.log('Page Changed: ', paginationDetails);
+  // }
 }

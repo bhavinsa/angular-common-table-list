@@ -1,12 +1,10 @@
-<p>home works!</p>
 <app-table [elementData]="elementData" [displayedColumns]="displayedColumns"
   [length]="length"
   [pageIndex]="0"
   [pageSize]="pageSize"
   [pageSizeOptions]="pageSizeOptions"
-  [parentSubject]="parentSubject"
-  (page)="paginationChange($event)"
-  (dataEvent)="dataEvent($event)">
+  [listingContainerSubject]="listingContainerSubject"
+  (listingEvent)="listingEvent($event)">
 </app-table>
 
 
